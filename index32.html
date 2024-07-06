@@ -1,0 +1,126 @@
+<link rel="icon" href="https://fav.farm/🔥" />
+<title>Clip Plane</title>
+
+<style>
+	html,
+	body {
+		width: 100%;
+		height: 100%;
+		margin: 0;
+		padding: 0;
+		background: #333;
+		touch-action: none;
+	}
+	#ui {
+		position: absolute !important;
+		top: 0;
+		left: 0;
+		color: white;
+	}
+	#ui,
+	#ui lume-element3d {
+		pointer-events: none;
+	}
+	#ui label {
+		pointer-events: auto;
+	}
+	lume-element3d {
+		padding: 15px;
+	}
+</style>
+
+<base href="https://docs.lume.io/" />
+<script src="./importmap.js"></script>
+
+<lume-scene id="scene" perspective="800" webgl shadowmap-type="pcfsoft">
+	<lume-ambient-light color="white" intensity="0.4"></lume-ambient-light>
+
+	<lume-camera-rig active vertical-angle="30" distance="400" max-distance="7000" min-distance="100">
+		<lume-point-light
+			position="200 -200 200"
+			intensity="0.6"
+			color="white"
+			shadow-bias="-0.001"
+			shadow-map-width="2048"
+			shadow-map-height="2048"
+			slot="camera-child"
+		></lume-point-light>
+	</lume-camera-rig>
+
+	<lume-box
+		id="box"
+		has="clip-planes"
+		clip-planes="#clipPlane"
+		flip-clip="false"
+		clip-disabled="false"
+		sidedness="double"
+		cast-shadow="true"
+		receive-shadow="true"
+		opacity="1"
+		color="skyblue"
+		dithering
+		mount-point="0.5 0.5 0.5"
+		rotation="0 45 0"
+		size="100 100 100"
+		scale="1 1 1"
+	>
+		<lume-sphere size="20 20 20" color="blue" mount-point="0.5 0.5 0.5" align-point="0.5 0.5 0.5"></lume-sphere>
+
+		<lume-clip-plane id="clipPlane" size="175 175" mount-point="0.5 0.5 0.5" align-point="0.5 0.5 0.5">
+			<lume-plane
+				id="plane"
+				opacity="0.5"
+				visible="false"
+				sidedness="double"
+				color="orange"
+				size="1 1"
+				size-mode="proportional proportional"
+				cast-shadow="false"
+				receive-shadow="false"
+			></lume-plane>
+		</lume-clip-plane>
+	</lume-box>
+
+	<lume-plane size="800 800" color="blue" rotation="90" position="0 150" mount-point="0.5 0.5"></lume-plane>
+</lume-scene>
+
+<lume-scene id="ui">
+	<lume-element3d size-mode="proportional literal" size="1 80">
+		<label>
+			Clipping enabled:
+			<input type="checkbox" checked onchange="box.clipDisabled = !box.clipDisabled" />
+		</label>
+		<br />
+		<label>
+			Flip clip:
+			<input
+				type="checkbox"
+				onchange="box.behaviors.get('clip-planes').flipClip = !box.behaviors.get('clip-planes').flipClip"
+			/>
+		</label>
+		<br />
+		<label>
+			Clip shadows:
+			<input
+				type="checkbox"
+				checked
+				onchange="box.behaviors.get('clip-planes').clipShadows = !box.behaviors.get('clip-planes').clipShadows"
+			/>
+		</label>
+		<br />
+		<label>
+			Visualize plane:
+			<input type="checkbox" onchange="plane.visible = !plane.visible" />
+		</label>
+	</lume-element3d>
+</lume-scene>
+
+<script type="module">
+	import 'lume'
+
+	// Other ways to set the clip planes:
+	// box.setAttribute('clip-planes', '#clipPlane')
+	// box.clipPlanes = [clipPlane]
+
+	clipPlane.rotation = (x, y, z, t) => [x, (y += 0.1), z]
+</script>
